@@ -14,16 +14,16 @@ import { BN } from "@marinade.finance/marinade-ts-sdk";
 import { IDL_DISCRIMINATOR, getIDLPDA, keypairFrom } from "./utils.js";
 
 async function initialize() {
-  const networkUrl: string = process.env.INPUT_NETWORK_URL!;
-  const multisigPda: string = process.env.INPUT_MULTISIG_PDA!;
-  const multisigVaultIndex = process.env.INPUT_MULTISIG_VAULT_INDEX!;
-  const programId = process.env.INPUT_PROGRAM_ID!;
-  const buffer = process.env.INPUT_BUFFER!;
-  const spillAddress = process.env.INPUT_SPILL_ADDRESS!;
-  const name = process.env.INPUT_NAME!;
-  const keypair = process.env.INPUT_KEYPAIR!;
-  const executableData = process.env.INPUT_EXECUTABLE_DATA!;
-  const idlBuffer = process.env.INPUT_IDL_BUFFER;
+  const networkUrl: string = core.getInput("network-url") ?? process.env.NETWORK_URL!;
+  const multisigPda: string = core.getInput("multisig-pda") ?? process.env.MULTISIG_PDA!;
+  const multisigVaultIndex = core.getInput("multisig-vault-index") ?? process.env.MULTISIG_VAULT_INDEX!;
+  const programId = core.getInput("program-id") ?? process.env.PROGRAM_ID!;
+  const buffer = core.getInput("buffer") ?? process.env.BUFFER!;
+  const spillAddress = core.getInput("spill-address") ?? process.env.SPILL_ADDRESS!;
+  const name = core.getInput("name") ?? process.env.NAME!;
+  const keypair = core.getInput("keypair") ?? process.env.KEYPAIR!;
+  const executableData = core.getInput("executable-data") ?? process.env.EXECUTABLE_DATA!;
+  const idlBuffer = core.getInput("idl-buffer") ?? process.env.IDL_BUFFER!;
 
   console.log(`Network URL: ${networkUrl}`);
   console.log(`Multisig PDA: ${multisigPda}`);
