@@ -37,18 +37,4 @@ inputs:
     required: false
 runs:
   using: "node20"
-  steps:
-    - run: |
-        npx tsx src/main.ts
-      shell: bash
-      env:
-        NETWORK_URL: ${{ inputs.network-url }}
-        MULTISIG_PDA: ${{ inputs.multisig-pda }}
-        MULTISIG_VAULT_INDEX: ${{ inputs.multisig-vault-index }}
-        PROGRAM_ID: ${{ inputs.program-id }}
-        BUFFER: ${{ inputs.buffer }}
-        SPILL_ADDRESS: ${{ inputs.spill-address }}
-        NAME: ${{ inputs.name }}
-        EXECUTABLE_DATA: ${{ inputs.executable-data }}
-        KEYPAIR: ${{ inputs.keypair }}
-        IDL_BUFFER: ${{ inputs.idl-buffer }}
+  main: "dist/main.js"
