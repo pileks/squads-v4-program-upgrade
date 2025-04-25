@@ -38,10 +38,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: npm install
+    - run: npm i bun -g
+      shell: bash
+    - run: bun i
       shell: bash
     - run: |
-        npm run dev
+        bun run dev
       shell: bash
       env:
         NETWORK_URL: ${{ inputs.network-url }}

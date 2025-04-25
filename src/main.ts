@@ -34,7 +34,10 @@ async function initialize() {
   console.log(`Name: ${name}`);
   console.log(`Executable Data: ${executableData}`);
   console.log(`IDL Buffer: ${idlBuffer ? idlBuffer : "None"}`);
-  console.log(`Keypair: ***`);
+
+  const coreKeypair = keypairFrom(keypair, "keypair");
+  console.log(`Keypair Public Key: ${coreKeypair.publicKey}`);
+  
   console.log("Initializing...");
 
   let multisigVaultIndexNumber = Number(multisigVaultIndex);
@@ -88,8 +91,6 @@ async function initialize() {
   const connection = new Connection(networkUrl, "confirmed");
 
   const blockhash = (await connection.getLatestBlockhash()).blockhash;
-
-  const coreKeypair = keypairFrom(keypair, "keypair");
 
   const multisigInfo =
     await multisig.accounts.accountProviders.Multisig.fromAccountAddress(
