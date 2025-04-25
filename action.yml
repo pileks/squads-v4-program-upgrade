@@ -36,6 +36,7 @@ inputs:
     description: "The idl buffer"
     required: false
 runs:
+  using: "node20"
   steps:
     - run: |
         npx tsx src/main.ts
