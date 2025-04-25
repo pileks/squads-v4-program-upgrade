@@ -38,18 +38,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: ls
-      shell: bash
-    - run: cat package.json
-      shell: bash
-    - run: npm i bun -g
-      shell: bash
-    - run: bun i
-      shell: bash
-    - run: bun run
-      shell: bash
     - run: |
-        bun run dev
+        npx tsx src/main.ts
       shell: bash
       env:
         NETWORK_URL: ${{ inputs.network-url }}
