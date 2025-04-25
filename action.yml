@@ -36,7 +36,6 @@ inputs:
     description: "The idl buffer"
     required: false
 runs:
-  using: "composite"
   steps:
     - run: |
         npx tsx src/main.ts
