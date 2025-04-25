@@ -1,6 +1,6 @@
 name: "Squads V4 program upgrade"
 description: "Squads v4 program upgrade Github Action"
-author: "Valentin Madrid"
+author: "Valentin Madrid, Jure Granic-Skender"
 branding:
   icon: "upload"
   color: "black"
@@ -37,4 +37,4 @@ inputs:
     required: false
 runs:
   using: "node20"
-  main: "dist/main.js"
+  main: "dist/index.js"

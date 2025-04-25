@@ -3,15 +3,14 @@
 	"main": "lib/main.js",
 	"private": false,
 	"version": "0.0.3",
-	"type": "module",
 	"scripts": {
-		"dev": "npx tsx ./src/main.ts",
-		"dev2": "ts-node --esm --experimental-specifier-resolution=node ./src/main.ts",
-		"build": "tsc",
+		"dev": "tsx ./src/main.ts",
+		"build": "esbuild src/main.ts --platform=node --bundle --outfile=dist/index.js",
 		"postinstall": "patch-package"
 	},
 	"devDependencies": {
 		"@types/inquirer": "^9.0.3",
+		"esbuild": "^0.25.3",
 		"patch-package": "^8.0.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.0.2"
