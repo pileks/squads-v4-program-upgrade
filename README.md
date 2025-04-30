@@ -23,7 +23,7 @@ https://github.com/pileks/squads-idl-deploy-example
 steps:
   - uses: actions/checkout@v4
   - name: Upgrade program
-    uses: Squads-Protocol/squads-v4-program-upgrade@beta
+    uses: pileks/squads-v4-program-upgrade@1.0.0
     with:
       network-url: "https://api.mainnet-beta.solana.com" # "https://api.devnet.solana.com" for devnet, or your own endpoint
       multisig-pda: "YOUR_MULTISIG_PDA"
