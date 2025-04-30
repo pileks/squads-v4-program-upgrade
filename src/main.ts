@@ -2,7 +2,6 @@ import * as core from "@actions/core";
 import {
   AccountMeta,
   Connection,
-  Keypair,
   PublicKey,
   SYSVAR_CLOCK_PUBKEY,
   SYSVAR_RENT_PUBKEY,
@@ -55,7 +54,7 @@ async function initialize() {
   console.log(`Multisig Vault: ${multisigVault}`);
 
   const upgradeData = new BN(3, 10);
-  const keys: AccountMeta[] = [
+  const upgradeIxKeys: AccountMeta[] = [
     {
       pubkey: new PublicKey(executableData), // executable data
       isWritable: true,
@@ -97,12 +96,6 @@ async function initialize() {
 
   const blockhash = (await connection.getLatestBlockhash()).blockhash;
 
-  const multisigInfo =
-    await multisig.accounts.accountProviders.Multisig.fromAccountAddress(
-      connection,
-      new PublicKey(multisigPda)
-    );
-
   const transactionMessage = new TransactionMessage({
     payerKey: new PublicKey(multisigVault),
     recentBlockhash: blockhash,
@@ -110,14 +103,13 @@ async function initialize() {
       new TransactionInstruction({
         programId: new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111"),
         data: upgradeData.toArrayLike(Buffer, "le", 4),
-        keys,
+        keys: upgradeIxKeys,
       }),
     ],
   });
 
-  let idlKeys: AccountMeta[];
   if (idlBuffer) {
-    idlKeys = [
+    const idlKeys: AccountMeta[] = [
       {
         pubkey: new PublicKey(idlBuffer),
         isSigner: false,
@@ -145,6 +137,12 @@ async function initialize() {
   } else {
     core.info("No IDL Buffer provided, skipping IDL upgrade");
   }
+
+  const multisigInfo =
+    await multisig.accounts.accountProviders.Multisig.fromAccountAddress(
+      connection,
+      new PublicKey(multisigPda)
+    );
 
   const transactionSignature = await multisig.rpc.vaultTransactionCreate({
     multisigPda: new PublicKey(multisigPda),
