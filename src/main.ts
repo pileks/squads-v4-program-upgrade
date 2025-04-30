@@ -2,7 +2,6 @@ import * as core from "@actions/core";
 import {
   AccountMeta,
   Connection,
-  Keypair,
   PublicKey,
   SYSVAR_CLOCK_PUBKEY,
   SYSVAR_RENT_PUBKEY,
@@ -14,15 +13,20 @@ import { BN } from "@marinade.finance/marinade-ts-sdk";
 import { IDL_DISCRIMINATOR, getIDLPDA, keypairFrom } from "./utils.js";
 
 async function initialize() {
-  const networkUrl: string = core.getInput("network-url") ?? process.env.NETWORK_URL!;
-  const multisigPda: string = core.getInput("multisig-pda") ?? process.env.MULTISIG_PDA!;
-  const multisigVaultIndex = core.getInput("multisig-vault-index") ?? process.env.MULTISIG_VAULT_INDEX!;
+  const networkUrl: string =
+    core.getInput("network-url") ?? process.env.NETWORK_URL!;
+  const multisigPda: string =
+    core.getInput("multisig-pda") ?? process.env.MULTISIG_PDA!;
+  const multisigVaultIndex =
+    core.getInput("multisig-vault-index") ?? process.env.MULTISIG_VAULT_INDEX!;
   const programId = core.getInput("program-id") ?? process.env.PROGRAM_ID!;
   const buffer = core.getInput("buffer") ?? process.env.BUFFER!;
-  const spillAddress = core.getInput("spill-address") ?? process.env.SPILL_ADDRESS!;
+  const spillAddress =
+    core.getInput("spill-address") ?? process.env.SPILL_ADDRESS!;
   const name = core.getInput("name") ?? process.env.NAME!;
   const keypair = core.getInput("keypair") ?? process.env.KEYPAIR!;
-  const executableData = core.getInput("executable-data") ?? process.env.EXECUTABLE_DATA!;
+  const executableData =
+    core.getInput("executable-data") ?? process.env.EXECUTABLE_DATA!;
   const idlBuffer = core.getInput("idl-buffer") ?? process.env.IDL_BUFFER!;
 
   console.log(`Network URL: ${networkUrl}`);
@@ -37,7 +41,7 @@ async function initialize() {
 
   const coreKeypair = keypairFrom(keypair, "keypair");
   console.log(`Keypair Public Key: ${coreKeypair.publicKey}`);
-  
+
   console.log("Initializing...");
 
   let multisigVaultIndexNumber = Number(multisigVaultIndex);
@@ -50,7 +54,7 @@ async function initialize() {
   console.log(`Multisig Vault: ${multisigVault}`);
 
   const upgradeData = new BN(3, 10);
-  const keys: AccountMeta[] = [
+  const upgradeIxKeys: AccountMeta[] = [
     {
       pubkey: new PublicKey(executableData), // executable data
       isWritable: true,
@@ -92,12 +96,6 @@ async function initialize() {
 
   const blockhash = (await connection.getLatestBlockhash()).blockhash;
 
-  const multisigInfo =
-    await multisig.accounts.accountProviders.Multisig.fromAccountAddress(
-      connection,
-      new PublicKey(multisigPda)
-    );
-
   const transactionMessage = new TransactionMessage({
     payerKey: new PublicKey(multisigVault),
     recentBlockhash: blockhash,
@@ -105,14 +103,13 @@ async function initialize() {
       new TransactionInstruction({
         programId: new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111"),
         data: upgradeData.toArrayLike(Buffer, "le", 4),
-        keys,
+        keys: upgradeIxKeys,
       }),
     ],
   });
 
-  let idlKeys: AccountMeta[];
   if (idlBuffer) {
-    idlKeys = [
+    const idlKeys: AccountMeta[] = [
       {
         pubkey: new PublicKey(idlBuffer),
         isSigner: false,
@@ -130,7 +127,7 @@ async function initialize() {
       },
     ];
 
-    transactionMessage.instructions.push(
+    transactionMessage.instructions.unshift(
       new TransactionInstruction({
         programId: new PublicKey(programId),
         data: IDL_DISCRIMINATOR,
@@ -140,6 +137,12 @@ async function initialize() {
   } else {
     core.info("No IDL Buffer provided, skipping IDL upgrade");
   }
+
+  const multisigInfo =
+    await multisig.accounts.accountProviders.Multisig.fromAccountAddress(
+      connection,
+      new PublicKey(multisigPda)
+    );
 
   const transactionSignature = await multisig.rpc.vaultTransactionCreate({
     multisigPda: new PublicKey(multisigPda),
@@ -156,6 +159,11 @@ async function initialize() {
 
   core.info(`Transaction signature: ${transactionSignature}`);
   core.info("Proposal has been created, execute it on the Squads app.");
+  core.info("Transaction will:");
+  core.info(`- Upgrade program ${programId} with buffer ${buffer}`);
+  if (idlBuffer) {
+    core.info(`- Upgrade program ${programId} IDL with buffer ${idlBuffer}`);
+  }
 }
 
 initialize();
