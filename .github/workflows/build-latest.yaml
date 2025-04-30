@@ -1,8 +1,8 @@
-name: "Build latest"
+name: "Build and commit latest"
 on: push
 
 jobs:
-  test:
+  build-and-commit-latest:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
