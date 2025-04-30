@@ -102,11 +102,11 @@ async function initialize() {
     payerKey: new PublicKey(multisigVault),
     recentBlockhash: blockhash,
     instructions: [
-      new TransactionInstruction({
-        programId: new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111"),
-        data: upgradeData.toArrayLike(Buffer, "le", 4),
-        keys,
-      }),
+      // new TransactionInstruction({
+      //   programId: new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111"),
+      //   data: upgradeData.toArrayLike(Buffer, "le", 4),
+      //   keys,
+      // }),
     ],
   });
 
@@ -156,6 +156,7 @@ async function initialize() {
 
   core.info(`Transaction signature: ${transactionSignature}`);
   core.info("Proposal has been created, execute it on the Squads app.");
+  core.info("The proposal is only for the IDL upgrade!");
 }
 
 initialize();
